@@ -8,6 +8,7 @@ function Player(game) {
   this.game = game;
   this.img.frames = 4;
   this.img.frameIndex = 0;
+  this.playerCanMove = [false, false, false, false];
 }
 
 Player.prototype.draw = function() {
@@ -26,19 +27,55 @@ Player.prototype.draw = function() {
 
 
 Player.prototype.moveRight = function() {
+  if (this.x + this.width >= this.game.canvas.width) return;
+  if (this.playerCanMove[0])
   this.x += 10;
 };
 
 Player.prototype.moveLeft = function() {
-  this.x -= 10;
+  if (this.x <= 0) return;
+  if(this.playerCanMove[1])
+    this.x -= 10;
 };
 
 Player.prototype.moveUp = function() {
+  if (this.y <= 0) return;
+  if (this.playerCanMove[2])
   this.y -= 10;
 };
 
 Player.prototype.moveDown = function() {
+  if (this.y + this.height >= this.game.canvas.height) return;
+  if (this.playerCanMove[3])
   this.y += 10;
 };
 
 Player.prototype.move = function() {};
+Player.prototype.trueLeft = function() {
+  this.playerCanMove[1] = true;
+}
+Player.prototype.trueRight = function() {
+  this.playerCanMove[0] = true;
+}
+
+Player.prototype.trueUp = function() {
+  this.playerCanMove[2] = true;
+}
+
+Player.prototype.trueDown = function() {
+  this.playerCanMove[3] = true;
+}
+Player.prototype.falseLeft = function() {
+  this.playerCanMove[1] = false;
+}
+Player.prototype.falseRight = function() {
+  this.playerCanMove[0] = false;
+}
+
+Player.prototype.falseUp = function() {
+  this.playerCanMove[2] = false;
+}
+
+Player.prototype.falseDown = function() {
+  this.playerCanMove[3] = false;
+}

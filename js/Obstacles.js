@@ -1,9 +1,9 @@
-function Obstacles (game) {
+function Obstacles (game, x, y, w, h) {
     this.game = game;
-    this.width = 60;
-    this.height = 110;
-    this.x = 400;
-    this.y = 300;
+    this.width = w;
+    this.height = h;
+    this.x = x;
+    this.y = y;
 }
 
 
@@ -13,6 +13,4 @@ Obstacles.prototype.draw= function(x, y, width, height) {
 }
 
 
-/*     this.x = this.game.canvas.width;
-    this.y = this.game.canvas.height; */
   
