@@ -24,24 +24,6 @@ Player.prototype.draw = function() {
   );
 };
 
-// Player.prototype.setListeners = function() {
-//   document.onkeydown = function(event) {
-//     switch (event.keyCode) {
-//       case 39:
-//         this.moveRight();
-//         break;
-//       case 37:
-//         this.moveLeft();
-//         break;
-//       case 38:
-//         this.moveUp();
-//         break;
-//       case 40:
-//         this.moveDown();
-//         break;
-//     }
-//   }.bind(this);
-// };
 
 Player.prototype.moveRight = function() {
   this.x += 10;

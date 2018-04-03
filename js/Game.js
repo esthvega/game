@@ -21,6 +21,7 @@ Game.prototype.start = function() {
       this.isCollisionR(this.obstacles);
       this.isCollisionL(this.obstacles);
       this.isCollisionD(this.obstacles);
+      this.isCollisionU(this.obstacles);
       this.draw();
     }.bind(this),
     3
@@ -84,20 +85,25 @@ Game.prototype.isCollisionL = function(obstacles) {
 };
 
 Game.prototype.isCollisionD = function(obstacles) {
-  if (this.player.y + 10 + this.player.height > obstacles.y &&
-    this.player.x  < obstacles.x + obstacles.width &&
-    this.player.x + this.player.width > obstacles.x
-    
-    
-//     this.player.x + this.player.width < obstacles.x + obstacles.width &&
-//  this.player.y  + this.player.height  > obstacles.y 
-  
-
-/* (obstacles.x < this.player.x && obstacles.x + obstacles.width > this.player.x && 
-obstacles.y < this.player.y ) ) */
-){  
+  if (this.player.x - 10 + this.player.width > obstacles.x &&
+    this.player.x < obstacles.x + obstacles.width &&
+    this.player.y + 10 + this.player.height > obstacles.y &&
+    obstacles.y + obstacles.height > this.player.y)
+{  
     console.log(this.player.x)
     
   this.playerCanMove[2] = false;}
   else this.playerCanMove[2] = true;
-}
+};
+
+Game.prototype.isCollisionU = function(obstacles) {
+   if(this.player.x + this.player.width > obstacles.x &&
+    this.player.x < obstacles.x + obstacles.width &&
+    this.player.y - 10 + this.player.height > obstacles.y &&
+    obstacles.y + obstacles.height > this.player.y - 10)
+  
+  {
+this.playerCanMove [0] = false;
+  } else this.playerCanMove[0] = true;
+
+};
