@@ -5,93 +5,103 @@ function Game(canvasId) {
   this.canvas.height = window.innerHeight - 25;
   this.player = new Player(this);
   this.obstacles = [
-    new Obstacles(
+    new Obstacle(
       this,
       0,
       this.canvas.height * 0.9,
-      this.canvas.width * 0.6,
+      this.canvas.width * 0.4,
       this.canvas.height * 0.1
     ),
-    new Obstacles(
+    new Obstacle(
       this,
       this.canvas.width * 0.65,
       this.canvas.height * 0.9,
       this.canvas.width * 0.4,
       this.canvas.height * 0.1
     ),
-    new Obstacles 
-    (this,
-     0,
-     this.canvas.height * 0.4,
-    this.canvas.width * 0.3,
-    this.canvas.height * 0.1)
-
+    new Obstacle(
+      this,
+      0,
+      this.canvas.height * 0.4,
+      this.canvas.width * 0.2,
+      this.canvas.height * 0.1
+    ),
+    new Obstacle(
+      this,
+      700,
+      this.canvas.height * 0.4,
+      this.canvas.width * 0.2,
+      this.canvas.height * 0.1
+    )
   ];
 }
-
-Game.prototype.draw = function() {
-  this.player.draw();
-  this.obstacles.forEach(function(e) {
-    e.draw();
+Game.prototype.updateGame = function() {
+  this.clear();
+  this.player.updatePlayer(this);
+  this.obstacles.forEach(function(obstacle) {
+    obstacle.updateObstacle();
   });
+  this.checkCollisions();
+  this.player.gravity();
 };
 
-Game.prototype.start = function() {
-  this.setListeners();
-  this.interval = setInterval(
-    function() {
-      console.log(this.player.x, this.player.y);
-      this.clear();
-      this.obstacles.forEach(
-        function(e) {
-          this.isCollisionR(e);
-          this.isCollisionL(e);
-          this.isCollisionD(e);
-          /*  this.isCollisionU(e); */
-        }.bind(this)
-      );
-
-      this.player.moveRight();
-      this.player.moveLeft();
-      this.player.moveUp();
-      this.player.moveDown();
-      this.draw();
-    }.bind(this),
-    60
+Game.prototype.checkCollisions = function() {
+  var collision = [false, false, false, false];
+  this.obstacles.forEach(
+    function(obstacle) {
+      if (obstacle.isCollision(this.player) != undefined) {
+        if (this.player.playerMovement[1]) {
+          collision[1] = obstacle.isCollision(this.player);
+          this.player.x = this.player.lastPosition.x - 10;
+          this.player.y = this.player.lastPosition.y;
+        }
+        if (this.player.playerMovement[3]) {
+          collision[3] = obstacle.isCollision(this.player);
+          this.player.x = this.player.lastPosition.x + 7;
+          this.player.y = this.player.lastPosition.y;
+        }
+        if (this.player.playerMovement[0]) {
+          collision[0] = obstacle.isCollision(this.player);
+          this.player.x = this.player.lastPosition.x;
+          this.player.y = this.player.lastPosition.y + 7;
+        }
+        if(!this.player.playerMovement[1]&&!this.player.playerMovement[3]) {
+          this.player.gravitySpeed = 0;
+          this.player.y = this.player.lastPosition.y - 7;
+        }else{
+          this.player.gravitySpeed = 6;
+        }
+      }
+    }.bind(this)
   );
+  return collision;
 };
 
 Game.prototype.setListeners = function() {
   document.onkeydown = function(event) {
     switch (event.keyCode) {
       case 39:
-        this.player.trueRight();
+        if (!this.checkCollisions()[1]) this.player.playerMovement[1] = true;
         break;
       case 37:
-        this.player.trueLeft();
+        if (!this.checkCollisions()[3]) this.player.playerMovement[3] = true;
         break;
-      case 38:
-        this.player.trueUp();
-        break;
-      case 40:
-        this.player.trueDown();
-        break;
+      // case 38:
+      // if(!this.checkCollisions()[0])this.player.playerMovement[0] = true;
+      // console.log("salto")
+      //   break;
     }
   }.bind(this);
   document.onkeyup = function(event) {
     switch (event.keyCode) {
       case 39:
-        this.player.falseRight();
+        this.player.playerMovement[1] = false;
         break;
       case 37:
-        this.player.falseLeft();
+        this.player.playerMovement[3] = false;
         break;
-      case 38:
-        this.player.falseUp();
-        break;
-      case 40:
-        this.player.falseDown();
-        break;
+      // case 38:
+      //   this.player.playerMovement[0] = false;
     }
   }.bind(this);
 };
@@ -99,57 +109,12 @@ Game.prototype.setListeners = function() {
 Game.prototype.clear = function() {
   this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
-
-Game.prototype.isCollisionR = function(obstacles) {
-  if (
-    this.player.x + 10 < obstacles.x + obstacles.width &&
-    this.player.x + 10 + this.player.width > obstacles.x &&
-    this.player.y < obstacles.y + obstacles.height &&
-    this.player.y + this.player.height > obstacles.y
-  ) {
-    this.player.falseRight();
-  }
-};
-Game.prototype.isCollisionL = function(obstacles) {
-  if (
-    this.player.x - 10 + this.player.width > obstacles.x &&
-    this.player.x - 10 < obstacles.x + obstacles.width &&
-    this.player.y + this.player.height > obstacles.y &&
-    obstacles.y + obstacles.height > this.player.y
-  ) {
-    this.player.falseLeft();
-  }
-};
-
-Game.prototype.isCollisionD = function(obstacles) {
-  if (
-    this.player.x + this.player.width > obstacles.x &&
-    this.player.x < obstacles.x + obstacles.width &&
-    this.player.y + 10 + this.player.height > obstacles.y &&
-    obstacles.y + obstacles.height > this.player.y
-  ) {
-    this.player.falseDown();
-    if (this.player.playerCanMove[3] == false) {
-      this.player.y = obstacles.y - this.player.height - 1;
-      this.player.vy = 0;
-    } else {
-      return (this.vy += this.gravity);
-      this.y += this.vy;
-    }
-
-    Game.prototype.isCollisionU = function(obstacles) {
-      if (
-        this.player.x + this.player.width > obstacles.x &&
-        this.player.x < obstacles.x + obstacles.width &&
-        this.player.y + 10 > obstacles.y &&
-        obstacles.y + obstacles.height > this.player.y - 10
-      ) {
-        this.player.falseUp();
-      }
-    };
-    Game.prototype.gravity = function() {
-      this.vy += this.gravity;
-      this.y += this.vy;
-    };
-  }
+Game.prototype.start = function() {
+  this.setListeners();
+  setInterval(
+    function() {
+      this.updateGame();
+    }.bind(this),
+    1000 / 60
+  );
 };

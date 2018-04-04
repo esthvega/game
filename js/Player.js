@@ -3,17 +3,22 @@ function Player(game) {
   this.height = 70;
   this.img = new Image();
   this.img.src = "./img/rompe-ralph.png";
-  this.x = 810;
-  this.y = 200;
+  this.x = 500;
+  this.y = 100;
+  this.lastPosition
   this.game = game;
   this.img.frames = 4;
   this.img.frameIndex = 0;
-  this.playerCanMove = [false, false, false , true ];
-  this.vx = 1;
-  this.vy = 0;
-  this.gravity = 0.15;
+  this.vx = 6;
+  this.vy = 6;
+  this.gravitySpeed = 6;
+  this.playerMovement = [false, false, false, false];
 }
-
+Player.prototype.updatePlayer = function (game) {
+  this.draw();
+  this.move();
+  this.lastPosition = Object.assign({},{x:this.x}, {y:this.y})
+}
 Player.prototype.draw = function() {
   this.game.ctx.drawImage(
     this.img,
@@ -27,72 +32,45 @@ Player.prototype.draw = function() {
     this.height
   );
 };
+Player.prototype.move = function() {
+  if(this.playerMovement[0]) this.moveUp();
+  if(this.playerMovement[1]) this.moveRight();
+  if(this.playerMovement[3]) this.moveLeft();
+};
 
-
+Player.prototype.gravity = function() {
+  if(this.canMoveDown()) this.y += this.gravitySpeed;
+}
 Player.prototype.moveRight = function() {
-  if (this.x + this.width >= this.game.canvas.width) return;
-  if (this.playerCanMove[0])
-  this.x += 10;
+  if(this.canMoveRight())this.x += this.vx;
 };
 
 Player.prototype.moveLeft = function() {
-  if (this.x <= 0) return;
-  if(this.playerCanMove[1])
-    this.x -= 10;
+  if(this.canMoveLeft())this.x -= this.vx;
 };
 
 Player.prototype.moveUp = function() {
-  
-  if (this.y <= 0) return;
-  if (this.playerCanMove[2])
-  this.y -= 11;
+  if(this.canMoveUp())this.y -= this.vy;
+};
+Player.prototype.moveDown = function() {
+  if(this.canMoveDown())this.y += this.vy;
 };
 
- Player.prototype.moveDown = function() {
-  if (this.y + this.height >= this.game.canvas.height /* ||
-     this.y + this.height <= this.game.obstacles.y */) {
-      return false; }
-      else { 
-  this.vy += this.gravity;
-  this.y += this.vy;}
+Player.prototype.canMoveRight = function() {
+  if(this.x >= this.game.canvas.width-this.width) return false;
+  else return true;
+};
 
-/*   if (this.y + this.height >= this.game.canvas.height
- ||  this.y + this.height > this.game.obstacles.y) return; // añadido
-  if (this.playerCanMove[3])
-  this.y += 10; */
-};  
+Player.prototype.canMoveLeft = function() {
+  if(this.x <= 0) return false;
+  else return true;
+};
 
-Player.prototype.move = function() {};
-Player.prototype.trueLeft = function() {
-  this.playerCanMove[1] = true;
-}
-Player.prototype.trueRight = function() {
-  this.playerCanMove[0] = true;
-}
-
-Player.prototype.trueUp = function() {
-  this.playerCanMove[2] = true;
-}
-
- Player.prototype.trueDown = function() {
-  this.playerCanMove[3] = true;
-} 
-Player.prototype.falseLeft = function() {
-  this.playerCanMove[1] = false;
-}
-Player.prototype.falseRight = function() {
-  this.playerCanMove[0] = false;
-}
-
-Player.prototype.falseUp = function() {
-  this.playerCanMove[2] = false;
-}
-
- Player.prototype.falseDown = function() {
-  this.playerCanMove[3] = false;
-} 
-
-Player.prototype.move = function() {
-
-   }
-
+Player.prototype.canMoveUp = function() {
+  if(this.y <= 0) return false;
+  else return true;
+};
+Player.prototype.canMoveDown = function() {
+  if(this.y >= this.game.canvas.height-this.height) return false;
+  else return true;
+};
