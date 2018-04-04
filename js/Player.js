@@ -3,12 +3,15 @@ function Player(game) {
   this.height = 70;
   this.img = new Image();
   this.img.src = "./img/rompe-ralph.png";
-  this.x = 400;
+  this.x = 810;
   this.y = 200;
   this.game = game;
   this.img.frames = 4;
   this.img.frameIndex = 0;
-  this.playerCanMove = [false, false, false, false];
+  this.playerCanMove = [false, false, false , true ];
+  this.vx = 1;
+  this.vy = 0;
+  this.gravity = 0.15;
 }
 
 Player.prototype.draw = function() {
@@ -39,16 +42,25 @@ Player.prototype.moveLeft = function() {
 };
 
 Player.prototype.moveUp = function() {
+  
   if (this.y <= 0) return;
   if (this.playerCanMove[2])
-  this.y -= 10;
+  this.y -= 11;
 };
 
-Player.prototype.moveDown = function() {
-  if (this.y + this.height >= this.game.canvas.height) return;
+ Player.prototype.moveDown = function() {
+  if (this.y + this.height >= this.game.canvas.height /* ||
+     this.y + this.height <= this.game.obstacles.y */) {
+      return false; }
+      else { 
+  this.vy += this.gravity;
+  this.y += this.vy;}
+
+/*   if (this.y + this.height >= this.game.canvas.height
+ ||  this.y + this.height > this.game.obstacles.y) return; // añadido
   if (this.playerCanMove[3])
-  this.y += 10;
-};
+  this.y += 10; */
+};  
 
 Player.prototype.move = function() {};
 Player.prototype.trueLeft = function() {
@@ -62,9 +74,9 @@ Player.prototype.trueUp = function() {
   this.playerCanMove[2] = true;
 }
 
-Player.prototype.trueDown = function() {
+ Player.prototype.trueDown = function() {
   this.playerCanMove[3] = true;
-}
+} 
 Player.prototype.falseLeft = function() {
   this.playerCanMove[1] = false;
 }
@@ -76,6 +88,11 @@ Player.prototype.falseUp = function() {
   this.playerCanMove[2] = false;
 }
 
-Player.prototype.falseDown = function() {
+ Player.prototype.falseDown = function() {
   this.playerCanMove[3] = false;
-}
+} 
+
+Player.prototype.move = function() {
+
+   }
+

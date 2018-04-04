@@ -5,8 +5,27 @@ function Game(canvasId) {
   this.canvas.height = window.innerHeight - 25;
   this.player = new Player(this);
   this.obstacles = [
-    new Obstacles(this, 0, this.canvas.height * 0.8, this.canvas.width * 0.6, this.canvas.height * 0.1),
-    new Obstacles(this, 1, this.canvas.height * 0.5, this.canvas.width * 0.1, this.canvas.height * 0.1),
+    new Obstacles(
+      this,
+      0,
+      this.canvas.height * 0.9,
+      this.canvas.width * 0.6,
+      this.canvas.height * 0.1
+    ),
+    new Obstacles(
+      this,
+      this.canvas.width * 0.65,
+      this.canvas.height * 0.9,
+      this.canvas.width * 0.4,
+      this.canvas.height * 0.1
+    ),
+    new Obstacles 
+    (this,
+     0,
+     this.canvas.height * 0.4,
+    this.canvas.width * 0.3,
+    this.canvas.height * 0.1)
+
   ];
 }
 
@@ -23,14 +42,15 @@ Game.prototype.start = function() {
     function() {
       console.log(this.player.x, this.player.y);
       this.clear();
-      this.obstacles.forEach(function(e) {
-        this.isCollisionR(e);
-        this.isCollisionL(e);
-        
-        this.isCollisionD(e);
-        this.isCollisionU(e);
-      }.bind(this))
-      
+      this.obstacles.forEach(
+        function(e) {
+          this.isCollisionR(e);
+          this.isCollisionL(e);
+          this.isCollisionD(e);
+          /*  this.isCollisionU(e); */
+        }.bind(this)
+      );
+
       this.player.moveRight();
       this.player.moveLeft();
       this.player.moveUp();
@@ -40,6 +60,7 @@ Game.prototype.start = function() {
     60
   );
 };
+
 Game.prototype.setListeners = function() {
   document.onkeydown = function(event) {
     switch (event.keyCode) {
@@ -79,17 +100,12 @@ Game.prototype.clear = function() {
   this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 };
 
-
-
 Game.prototype.isCollisionR = function(obstacles) {
-  
   if (
-this.player.x + 10 < obstacles.x + obstacles.width &&
-this.player.x + 10 + this.player.width > obstacles.x &&
-this.player.y < obstacles.y + obstacles.height &&
-this.player.y + this.player.height > obstacles.y 
-
-  
+    this.player.x + 10 < obstacles.x + obstacles.width &&
+    this.player.x + 10 + this.player.width > obstacles.x &&
+    this.player.y < obstacles.y + obstacles.height &&
+    this.player.y + this.player.height > obstacles.y
   ) {
     this.player.falseRight();
   }
@@ -102,30 +118,38 @@ Game.prototype.isCollisionL = function(obstacles) {
     obstacles.y + obstacles.height > this.player.y
   ) {
     this.player.falseLeft();
-  } 
+  }
 };
 
 Game.prototype.isCollisionD = function(obstacles) {
   if (
     this.player.x + this.player.width > obstacles.x &&
     this.player.x < obstacles.x + obstacles.width &&
-    this.player.y +10 
-    + this.player.height > obstacles.y &&
+    this.player.y + 10 + this.player.height > obstacles.y &&
     obstacles.y + obstacles.height > this.player.y
   ) {
-  
     this.player.falseDown();
+    if (this.player.playerCanMove[3] == false) {
+      this.player.y = obstacles.y - this.player.height - 1;
+      this.player.vy = 0;
+    } else {
+      return (this.vy += this.gravity);
+      this.y += this.vy;
     }
-};
 
-Game.prototype.isCollisionU = function(obstacles) {
-  if (
-    this.player.x + this.player.width > obstacles.x  &&
-    this.player.x < obstacles.x + obstacles.width   &&
-    this.player.y + 10 > obstacles.y &&
-    obstacles.y + obstacles.height > this.player.y - 10
-  ) 
-    
-    this.player.falseUp();
-  
-}
+    Game.prototype.isCollisionU = function(obstacles) {
+      if (
+        this.player.x + this.player.width > obstacles.x &&
+        this.player.x < obstacles.x + obstacles.width &&
+        this.player.y + 10 > obstacles.y &&
+        obstacles.y + obstacles.height > this.player.y - 10
+      ) {
+        this.player.falseUp();
+      }
+    };
+    Game.prototype.gravity = function() {
+      this.vy += this.gravity;
+      this.y += this.vy;
+    };
+  }
+};
