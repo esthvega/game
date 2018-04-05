@@ -6,6 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>My Game</title>
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
     <script type="text/javascript" src="./js/Obstacles.js"></script>
     <script type="text/javascript" src="./js/Background.js"></script>
     <script type="text/javascript" src="./js/Player.js"></script>
@@ -14,7 +18,13 @@
     <link rel="stylesheet" type="text/css" href="./css/style.css">
 </head>
 <body>
-    <canvas id="canvas" ></canvas>
+    <canvas id="canvas" width="1200" height="400"></canvas>
+    <div id="game-over">
+        <div class="flex"><button class="game-btn">Play game</button></div>
+    </div>
+    <div id="game-won">
+        
+    </div>
 </body>
 
 </html>
