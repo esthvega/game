@@ -12,9 +12,3 @@ Obstacle.prototype.draw = function(x, y, width, height) {
   this.game.ctx.fillRect(this.x, this.y, this.width, this.height);
 };
 
-Obstacle.prototype.isCollision = function(player) {
-    if (player.x < this.x + this.width && player.x + player.width > this.x &&
-        player.y < this.y + this.height && player.y + player.height > this.y) {
-    return true;
-  }
-};
